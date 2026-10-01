@@ -39,6 +39,11 @@
 * teleport_cut 去掉切镜开头的位置重申（模拟瞬移）
 * spell_no_feedback 法术击中后抽掉物理反馈
 * xyz_drift 扰动/剥掉 xyz 坐标锁定（左右互换、跳 Z、无位移瞬移）
+* defense_3state_skip 跳过崩防/狼狈过渡，重击后满血架防
+* hittee_freeze 抽掉被击形变/踉跄/本能抗争，变成站桩挨打
+* match_break 破坏动势衔接（删接上一镜/中段续弧）
+* micro_evasion 把大幅闪避改成微微侧身
+* feedback_thin 命中后抽干气爆/冲击波/形变反馈
 """
 
 from __future__ import annotations
@@ -847,6 +852,169 @@ class DegradeOp:
     fn: Any
 
 
+
+def _defense_3state_skip(text: str, rng: random.Random) -> Tuple[str, bool]:
+    """跳过防守三态：去掉崩防/狼狈过渡，改成重击后立刻满血架防。"""
+    chinese = lexicons.is_chinese(text)
+    changed = False
+    out = text
+    drop = list(lexicons.DEFENSE_3STATE) + [
+        "崩防线", "双臂震开", "狼狈", "乱拍", "来不及重新架防",
+        "arms blown open", "messy transition", "flails", "too late to re-guard",
+        "guard breaks", "defense line breaks",
+    ]
+    for w in drop:
+        if w.isascii():
+            pat = re.compile(re.escape(w), re.I)
+            if pat.search(out) and rng.random() < 0.85:
+                out = pat.sub("", out)
+                changed = True
+        elif w in out and rng.random() < 0.85:
+            out = out.replace(w, "")
+            changed = True
+    if chinese:
+        repl = "被重击后立刻重新架稳满血架防，没有崩防过渡"
+        if "架" in out or "挡" in out:
+            out2 = re.sub(r"(崩防线[^。]*。|狼狈过渡[^。]*。|双臂向两侧震开[^。]*。)", repl + "。", out)
+            if out2 != out:
+                out, changed = out2, True
+            elif rng.random() < 0.7:
+                out = out + "\n" + repl + "。"
+                changed = True
+    else:
+        repl = "after the heavy hit instantly resets to a full fresh guard with no break transition"
+        if re.search(r"guard|parry|block", out, re.I):
+            out2 = re.sub(
+                r"(defense line breaks[^.]*\.|messy transition[^.]*\.|arms blown open[^.]*\.)",
+                repl + ".", out, flags=re.I)
+            if out2 != out:
+                out, changed = out2, True
+            elif rng.random() < 0.7:
+                out = out + "\n" + repl + "."
+                changed = True
+    return out, changed
+
+
+def _hittee_freeze(text: str, rng: random.Random) -> Tuple[str, bool]:
+    """被击反应冻结：抽掉形变/踉跄/本能抗争，站桩挨打。"""
+    chinese = lexicons.is_chinese(text)
+    words = list(lexicons.HITTEE_REACTION) + list(lexicons.FEEDBACK)[:20]
+    out = text
+    changed = False
+    for w in words:
+        if w.isascii():
+            pat = re.compile(r"\b" + re.escape(w) + r"\b", re.I)
+            if pat.search(out) and rng.random() < 0.75:
+                out = pat.sub("", out)
+                changed = True
+        elif w in out and rng.random() < 0.75:
+            out = out.replace(w, "")
+            changed = True
+    if chinese:
+        inject = "对方被击中后原地站桩挨打，没有形变踉跄与本能抗争"
+        if "击" in out or "中" in out:
+            out = out + "\n" + inject + "。"
+            changed = True
+    else:
+        inject = "the hittee freezes in place and eats the hit with no deform, stagger, or scramble"
+        if re.search(r"hit|impact|connect", out, re.I):
+            out = out + "\n" + inject + "."
+            changed = True
+    return out, changed
+
+
+def _match_break(text: str, rng: random.Random) -> Tuple[str, bool]:
+    """破坏动势衔接：删接上一镜/中段续弧短语，并插入跳切重置。"""
+    out = text
+    changed = False
+    for w in lexicons.MATCH_ACTION:
+        if w.isascii():
+            pat = re.compile(re.escape(w), re.I)
+            if pat.search(out):
+                out = pat.sub("", out)
+                changed = True
+        elif w in out:
+            out = out.replace(w, "")
+            changed = True
+    # 在 Shot 2+ 注入动作重置
+    lines = out.split("\n")
+    shot_i = 0
+    new_lines = []
+    for line in lines:
+        if SHOT_RE.match(line.strip()):
+            shot_i += 1
+        if shot_i >= 2 and rng.random() < 0.55 and not changed:
+            if lexicons.is_chinese(line):
+                line = line + "动作从静止重新起手，没有承接上镜中段弧线。"
+            else:
+                line = line + " Action resets from idle with no mid-arc continuity."
+            changed = True
+        new_lines.append(line)
+    return "\n".join(new_lines), changed
+
+
+def _micro_evasion(text: str, rng: random.Random) -> Tuple[str, bool]:
+    """大幅闪避 → 微微侧身。"""
+    pairs = [
+        ("铁板桥大后仰", "微微侧身"),
+        ("铁板桥", "微微后仰"),
+        ("贴地下潜", "轻轻一让"),
+        ("极低下潜", "微微低头"),
+        ("侧空翻", "小幅平移"),
+        ("大步滑移", "轻轻挪步"),
+        ("大步滑位", "小步挪动"),
+        ("大幅闪避", "微微侧身"),
+        ("下潜贴地", "轻轻侧身"),
+        ("limbo lean", "slightly leans"),
+        ("deep lean-back", "slight lean"),
+        ("low duck to the ground", "slightly ducks"),
+        ("side flip", "small sidestep"),
+        ("large slip-step", "tiny step"),
+        ("large evasion", "slight dodge"),
+        ("dives flat", "slightly sidesteps"),
+    ]
+    out = text
+    changed = False
+    for a, b in pairs:
+        if a.lower() in out.lower() if a.isascii() else a in out:
+            if a.isascii():
+                out = re.sub(re.escape(a), b, out, flags=re.I)
+            else:
+                out = out.replace(a, b)
+            changed = True
+    if not changed and rng.random() < 0.5:
+        if lexicons.is_chinese(out):
+            out = out + "\n闪避只是微微侧身，没有大幅肉体运动。"
+        else:
+            out = out + "\nEvasion is only a slight sidestep with no large body motion."
+        changed = True
+    return out, changed
+
+
+def _feedback_thin(text: str, rng: random.Random) -> Tuple[str, bool]:
+    """命中后抽干气爆/冲击波/形变，只留空洞的「打中了」。"""
+    words = list(lexicons.IMPACT_AIR) + list(lexicons.FEEDBACK) + list(lexicons.HITTEE_REACTION)
+    out = text
+    changed = False
+    for w in words:
+        if w.isascii():
+            pat = re.compile(r"\b" + re.escape(w) + r"\b", re.I)
+            if pat.search(out) and rng.random() < 0.7:
+                out = pat.sub("", out)
+                changed = True
+        elif w in out and rng.random() < 0.7:
+            out = out.replace(w, "")
+            changed = True
+    if lexicons.is_chinese(out):
+        out2 = re.sub(r"(击中|命中|打中)([^。]*?)。", r"\1对方，但没有可见反馈。", out, count=2)
+    else:
+        out2 = re.sub(r"(hits?|connects|struck)([^.]*?)\.", r"\1 with no visible feedback.", out, count=2, flags=re.I)
+    if out2 != out:
+        out, changed = out2, True
+    return out, changed
+
+
+
 _OPS: List[DegradeOp] = [
     DegradeOp("force_chain", "抽掉力线（蹬地/转腰/送胯/借力）", 1.0,
               lambda t, r, lv: _drop_sentences_with(t, lexicons.FORCE_CHAIN, 0.15, r)),
@@ -902,6 +1070,16 @@ _OPS: List[DegradeOp] = [
               lambda t, r, lv: _spell_no_feedback(t, r)),
     DegradeOp("xyz_drift", "扰动/剥掉 xyz 坐标锁定（瞬移差向量）", 1.2,
               lambda t, r, lv: _xyz_drift(t, r)),
+    DegradeOp("defense_3state_skip", "跳过崩防/狼狈过渡→满血架防", 1.2,
+              lambda t, r, lv: _defense_3state_skip(t, r)),
+    DegradeOp("hittee_freeze", "抽掉被击形变/踉跄/本能抗争", 1.2,
+              lambda t, r, lv: _hittee_freeze(t, r)),
+    DegradeOp("match_break", "破坏动势衔接/段缝末态连续", 1.15,
+              lambda t, r, lv: _match_break(t, r)),
+    DegradeOp("micro_evasion", "大幅闪避改微微侧身", 1.05,
+              lambda t, r, lv: _micro_evasion(t, r)),
+    DegradeOp("feedback_thin", "命中后抽干气爆/形变反馈", 1.15,
+              lambda t, r, lv: _feedback_thin(t, r)),
 ]
 OPS_BY_KEY: Dict[str, DegradeOp] = {op.key: op for op in _OPS}
 ALL_OP_KEYS: List[str] = [op.key for op in _OPS]
@@ -917,8 +1095,13 @@ CRITICAL_FAILURE_OPS: List[str] = [
     "identity_drift", "teleport_cut", "spell_no_feedback",
     "xyz_drift",
 ]
-# 默认档案：经典逻辑 + 高动态 + 六大翻车
-DEFAULT_OPS: List[str] = LOGIC_OPS + HIGH_DYNAMIC_OPS + CRITICAL_FAILURE_OPS
+# 漫剧老李：连续/衔接/击打反馈/被击反应
+CONTINUITY_OPS: List[str] = [
+    "defense_3state_skip", "hittee_freeze", "match_break",
+    "micro_evasion", "feedback_thin",
+]
+# 默认档案：经典逻辑 + 高动态 + 六大翻车 + 连续性
+DEFAULT_OPS: List[str] = LOGIC_OPS + HIGH_DYNAMIC_OPS + CRITICAL_FAILURE_OPS + CONTINUITY_OPS
 
 
 @dataclass

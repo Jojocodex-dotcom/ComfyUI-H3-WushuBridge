@@ -1,37 +1,42 @@
 {
   "pairs_path": "models/wushu_bridge/datasets/wushu_pairs_v2_logic_chains.jsonl",
   "stats": {
-    "count": 615,
+    "count": 863,
     "sources": {
-      "corpus": 390,
-      "seed": 225
+      "corpus": 565,
+      "seed": 298
     },
-    "mean_bad_score": 0.4207,
-    "mean_good_score": 0.5407,
-    "mean_gap": 0.1199,
+    "mean_bad_score": 0.4365,
+    "mean_good_score": 0.5393,
+    "mean_gap": 0.1028,
     "op_usage": {
-      "jump_orphan": 308,
-      "spell_miss_target": 255,
-      "facing_break": 210,
-      "defense": 166,
-      "teleport_cut": 163,
-      "moves": 161,
-      "chain_break": 154,
-      "force_chain": 148,
-      "occlusion": 135,
-      "spell_no_feedback": 115,
-      "feedback": 110,
-      "distance": 107,
-      "identity_drift": 103,
-      "facing": 90,
-      "ending": 89,
-      "ownership": 72,
-      "contact": 68,
-      "xyz_drift": 65,
-      "holes": 61,
-      "momentum": 46,
-      "state_carry": 23,
-      "pursuit": 20
+      "feedback_thin": 509,
+      "jump_orphan": 463,
+      "match_break": 454,
+      "spell_miss_target": 358,
+      "hittee_freeze": 356,
+      "facing_break": 289,
+      "micro_evasion": 253,
+      "moves": 238,
+      "defense": 234,
+      "teleport_cut": 214,
+      "chain_break": 208,
+      "force_chain": 207,
+      "occlusion": 207,
+      "spell_no_feedback": 158,
+      "distance": 153,
+      "defense_3state_skip": 143,
+      "feedback": 143,
+      "ending": 139,
+      "facing": 135,
+      "contact": 124,
+      "identity_drift": 114,
+      "ownership": 93,
+      "xyz_drift": 70,
+      "momentum": 52,
+      "state_carry": 46,
+      "holes": 33,
+      "pursuit": 29
     }
   },
   "ops": [
@@ -55,7 +60,12 @@
     "identity_drift",
     "teleport_cut",
     "spell_no_feedback",
-    "xyz_drift"
+    "xyz_drift",
+    "defense_3state_skip",
+    "hittee_freeze",
+    "match_break",
+    "micro_evasion",
+    "feedback_thin"
   ],
   "chains": [
     {
@@ -393,6 +403,154 @@
         "causal",
         "occlusion",
         "feedback"
+      ]
+    },
+    {
+      "name": "defense_3state_break",
+      "label_zh": "防守三态：完整态→崩防线→狼狈过渡",
+      "label_en": "Defense 3-state: full → break → messy transition",
+      "family": "fight",
+      "beats": 3,
+      "slots": [
+        "defense",
+        "distance",
+        "facing",
+        "force",
+        "contact",
+        "feedback",
+        "hittee",
+        "large_evasion",
+        "causal"
+      ]
+    },
+    {
+      "name": "machine_gun_near_exchange",
+      "label_zh": "近景机枪对招：拳掌肘序列+逐击反馈",
+      "label_en": "Near machine-gun exchange: punch/palm/elbow + per-hit feedback",
+      "family": "fight",
+      "beats": 3,
+      "slots": [
+        "moves",
+        "force",
+        "contact",
+        "facing",
+        "defense",
+        "feedback",
+        "hittee",
+        "causal",
+        "momentum"
+      ]
+    },
+    {
+      "name": "match_on_action_cut",
+      "label_zh": "动势衔接切：上镜起手→下镜命中续弧",
+      "label_en": "Match-on-action cut: wind-up → mid-arc hit",
+      "family": "fight",
+      "beats": 3,
+      "slots": [
+        "force",
+        "moves",
+        "match_action",
+        "facing",
+        "contact",
+        "feedback",
+        "causal",
+        "hittee",
+        "state_carry"
+      ]
+    },
+    {
+      "name": "hittee_reaction_arc",
+      "label_zh": "被击反应弧：命中→形变→踉跄→本能抗争",
+      "label_en": "Hittee reaction arc: impact → deform → stagger → scramble",
+      "family": "fight",
+      "beats": 3,
+      "slots": [
+        "contact",
+        "force",
+        "moves",
+        "feedback",
+        "hittee",
+        "impact_air",
+        "defense",
+        "large_evasion",
+        "causal",
+        "state_carry"
+      ]
+    },
+    {
+      "name": "collision_two_phase",
+      "label_zh": "对撞反震两段式：接触爆发→双向分离",
+      "label_en": "Two-phase collision: impact burst → mutual separation",
+      "family": "fight",
+      "beats": 3,
+      "slots": [
+        "force",
+        "contact",
+        "impact_air",
+        "facing",
+        "momentum",
+        "feedback",
+        "hittee",
+        "causal",
+        "pursuit",
+        "moves"
+      ]
+    },
+    {
+      "name": "finisher_three_act",
+      "label_zh": "终结技三幕：破局→绽放→余震",
+      "label_en": "Finisher three-act: break → burst → shock",
+      "family": "fight",
+      "beats": 3,
+      "slots": [
+        "defense",
+        "force",
+        "contact",
+        "feedback",
+        "moves",
+        "aerial",
+        "hittee",
+        "impact_air",
+        "env_continuity",
+        "causal"
+      ]
+    },
+    {
+      "name": "shuttle_cross_swap",
+      "label_zh": "1v1穿梭：交叉换位+位移路径",
+      "label_en": "1v1 shuttle: cross-swap with explicit paths",
+      "family": "fight",
+      "beats": 3,
+      "slots": [
+        "pursuit",
+        "force",
+        "facing",
+        "distance",
+        "contact",
+        "feedback",
+        "match_action",
+        "moves",
+        "causal"
+      ]
+    },
+    {
+      "name": "end_state_splice",
+      "label_zh": "段缝末态继承：具体末帧→下镜起手",
+      "label_en": "End-state splice: concrete end frame → next open",
+      "family": "behavior",
+      "beats": 3,
+      "slots": [
+        "state_carry",
+        "facing",
+        "ownership",
+        "feedback",
+        "match_action",
+        "occlusion",
+        "causal",
+        "moves",
+        "force",
+        "hittee"
       ]
     }
   ],

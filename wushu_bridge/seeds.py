@@ -27,6 +27,7 @@
 v1.1 起额外覆盖 BUNNY 启发的高动态家族：缴械回收、撞墙反弹、遮挡再识别、
 追击刹停再交手、1v2 交接、伤势跨镜继承、湿街追逐（武打味）。
 v1.1.2 起：显式 xyz 坐标锁定（角色A@xyz=(-2,0,0) / <Subject 1> at xyz=…）。
+v2.1 起：漫剧老李连续/衔接/击打反馈/被击反应（防守三态、机枪对招、动势衔接、被击弧、对撞两段、终结三幕、穿梭换位、段缝末态）。
 """
 
 from __future__ import annotations
@@ -149,6 +150,39 @@ integrated_multimodal_description:
 overall_soundscape: brick feet, steel clash, grunt, breath.
 non_diegetic_music: None.""",
 
+    # ── 15. 防守三态 + 被击反应（崩防→狼狈）──────────────────────────
+    """wushu_action, 10.2 seconds, 243 frames, 16:9, 24fps, 832x480. 青砖演武场，硬光。角色A是短打持拳男性，画面左侧。角色B是劲装持高护架男性，画面右侧。开场已面对面。
+integrated_multimodal_description:
+[Shot 1] medium close-up, handheld。坐标锁定：角色A@xyz=(-2,0,0) 与 角色B@xyz=(2,0,0) 面对面，间距2格。角色B桩架稳固，双臂架桥护头护胸，完整态格挡。角色A垫步逼近，后脚蹬地转腰，右直拳砸向架门。仍是同一张脸、同一套服装。
+[Shot 2] At 00:02.200.近景。接上一镜：角色A@xyz=(-1,0,0) 仍朝向角色B，重击砸开架门，因此角色B崩防线：双臂向两侧震开，中线大开半拍，眉骨被擦中溅火星，重心不稳。角色B来不及完整格挡，只能侧身避半拍。仍是同一张脸、同一套服装。
+[Shot 3] At 00:05.400.斜侧。于是角色B狼狈过渡：极低下潜贴地再碎步撤步后撤，本能单臂乱拍换架不及；角色A趁这个空档跟步左横肘切肋，衣料闷响，角色B硬吃身躯弓成虾形沿作用线单膝跪地，伤势仍受限，不再起身满血架防。
+overall_soundscape: 踏砖、拳风、肘击闷响、火星、闷哼、粗喘。
+non_diegetic_music: None.""",
+    # ── 16. 近景机枪对招 + 肘击序列 ─────────────────────────────────
+    """wushu_action, 10.2 seconds, 243 frames, 16:9, 24fps, 832x480. 夜巷夯土，两侧土墙。角色A是短打女性，角色B是劲装男性，上半身近景对招。
+integrated_multimodal_description:
+[Shot 1] medium close-up, handheld follow。角色A在左侧面对面朝向角色B，间距1格，垫步逼近。机枪节奏：右摆拳打脸→左勾拳打下颌→右直拳打鼻梁→左横肘切眉骨；角色B依次格挡、侧身避、下潜闪、拍开换架。仍是同一张脸、同一套服装。
+[Shot 2] At 00:02.100.近景。接上一镜动作中段续：肘尖切中眉骨溅火星，因此角色B踉跄闷哼，崩防线中线大开，重心不稳。角色A趁这个空档踏步跟步补膝撞肋，环形微气爆荡开衣料。仍是同一张脸、同一套服装。
+[Shot 3] At 00:05.200.over-the-shoulder。于是角色A终结技顶肘贯心口，角色B硬吃身躯凹陷弓形，退半步后倒退嵌向土墙，地面扬尘，不再起身。
+overall_soundscape: 拳肘破空、拍架、火星、闷响、撞墙、粗喘。
+non_diegetic_music: None.""",
+    # ── 17. 动势衔接切 + 段缝末态 ───────────────────────────────────
+    """wushu_action, 10.2 seconds, 243 frames, 16:9, 24fps, 832x480. 雨夜湿石长街，灯笼柱实体。角色A黑衣持太刀，角色B靛蓝袍持单刀。
+integrated_multimodal_description:
+[Shot 1] medium shot, tracking。角色A在左侧面向角色B，间距2格，垫步逼近，后脚蹬湿石转腰，「过肩劈」挥到过半，弧线未完，刀尖尚未触及；角色B举刀格挡蓄势。仍是同一张脸、同一套服装与武器。
+[Shot 2] At 00:02.000.特写切中景。接上一镜动作中段续：同一刀势补完弧线命中角色B肩线，刃面啃入衣料溅火星与微气爆，因此角色B硬吃踉跄，伤肩衣破渗血，重心不稳。角色B碎步撤步泄力，换机位续打。仍是同一张脸、同一套服装与武器。
+[Shot 3] At 00:05.300.over-the-shoulder。接上一镜末态起手：角色B单膝跪于湿石右侧，刀尖垂地，伤肩仍受限；角色A在左侧持刀高位未收。于是角色A趁这个空档终结技「斜劈」压下，角色B狼狈残架被震开，仰面倒地，湿石仍湿，不再起身。
+overall_soundscape: 踏湿石、刀弧、命中火星、衣裂、雨声、粗喘。
+non_diegetic_music: None.""",
+    # ── 18. 对撞两段 + 穿梭换位 + 终结三幕 ─────────────────────────
+    """wushu_action, 10.2 seconds, 243 frames, 16:9, 24fps, 832x480. 焦土战场，碎石。角色A银白劲装持剑，角色B黑红劲装持刀。
+integrated_multimodal_description:
+[Shot 1] wide oblique, tracking。角色A自左向右冲锋、角色B自右向左对冲，间距从3格拉到交叉点，画面中央交叉换位擦肩，刃面互刮溅火星，朝向短暂同向；双方踏步碾步不停。仍是同一张脸、同一套服装与武器。
+[Shot 2] At 00:02.200.中景。于是两人回身硬撞：接触点爆闪与环形气浪，地面放射状龟裂；双向反震分离各退半步，立刻垫步接新动作禁止僵持，角色B举刀格挡不及。仍是同一张脸、同一套服装与武器。
+[Shot 3] At 00:05.400.仰拍跟进。破局：角色A趁这个空档重击砸开角色B双臂崩防线；绽放：踏步凌空下劈终结技全力砸落；余震：冲击波扩散，角色B硬吃弓形倒飞，碎石滞空，终帧定格最炸裂瞬间，不再起身。
+overall_soundscape: 冲刺、刃刮、对撞气浪、地裂、冲击波、粗喘。
+non_diegetic_music: None.""",
+
 ]
 
 SEED_REF2V: List[str] = [
@@ -222,6 +256,24 @@ detailed_description:
 [Shot 3] At 00:05.400.oblique push-in. <Subject 1> steps in, xyz updates to (-1,0,0); <Subject 2> retreats to (1,0,0) — update only after explicit footwork. Finisher drops <Subject 2> to one knee; he does not get up.
 overall_soundscape: brick feet, steel, grunt, breath.
 non_diegetic_music: None.""",
+    # ── 新：防守三态 + 被击反应 + 动势衔接（ref2v）──────────────────
+    """subject_definitions:
+<Subject 1> is the woman in <Picture 1>, short martial jacket, bare fists. Preserve face, hair, clothing, proportions.
+<Subject 2> is the man in <Picture 2>, martial top, high guard. Preserve face, hair, clothing, proportions.
+<Subject 3> is the brick yard in <Picture 3>, hard noon light, solid ground.
+summary:
+[reference generation] A 10-second close exchange: <Subject 1> breaks <Subject 2>'s full guard through defense 3-states, then finishes with an elbow after match-on-action continuity.
+retention_analysis:
+<Subject 1> (appears in [Shot 1]): fully_preserved - face, jacket unchanged.
+<Subject 2> (appears in [Shot 2]): fully_preserved - face, guard collapse and injury carry tracked.
+<Subject 3> (appears in [Shot 3]): fully_preserved - brick marks persist.
+detailed_description:
+[Shot 1] medium close-up, handheld. <Subject 2> holds a solid full guard, arms bridged, face to face with <Subject 1> at two steps. <Subject 1> drives the rear foot into a straight cross that smashes the bridge. Same faces, same costumes.
+[Shot 2] At 00:02.200.close push-in. Continuing mid-action: the same punch finishes; <Subject 2>'s defense line breaks, arms blown open, center line exposed; brow grazed with sparks, so he staggers. Same faces, same costumes.
+[Shot 3] At 00:05.400.over-the-shoulder. Too late to re-guard, messy transition — <Subject 2> dives flat then scrambles; <Subject 1> follows with a horizontal elbow to the ribs, cloth thuds, shrimp-bend along the line of force, drops to one knee and does not reset to a full-health guard.
+overall_soundscape: brick feet, punch whoosh, elbow thud, sparks, grunt, breath.
+non_diegetic_music: None.""",
+
 ]
 
 SEED_HORDE: List[str] = [

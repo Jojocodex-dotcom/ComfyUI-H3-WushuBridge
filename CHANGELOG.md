@@ -1,5 +1,23 @@
 # Changelog
 
+## v2.1.0 — 2026-10-01 · Continuity / 衔接 / Hit feedback / Hittee reaction
+
+Distilled from manju-laoli-skill combat refs (`combat-direction-engine`, `combat-rhythm-defense3state`, `action-cinematography-breakdown`, `action-ultimate-finisher`, `segment-splicing`, `authentic-martial-taxonomy`).
+
+### Added
+- Logic chains (8): `defense_3state_break`, `machine_gun_near_exchange`, `match_on_action_cut`, `hittee_reaction_arc`, `collision_two_phase`, `finisher_three_act`, `shuttle_cross_swap`, `end_state_splice`
+- Lexicons: `HITTEE_REACTION`, `DEFENSE_3STATE`, `LARGE_EVASION`, `MATCH_ACTION`, `IMPACT_AIR` (+ merged into FEEDBACK)
+- Degrade ops `CONTINUITY_OPS`: `defense_3state_skip`, `hittee_freeze`, `match_break`, `micro_evasion`, `feedback_thin` → merged into `DEFAULT_OPS`
+- Scoring: `defense-3state`, `hittee-reaction`, `match-on-action`, `large-evasion`, `impact-air-burst`; impact-feedback weight 1.55
+- Seeds: T2V +4 (15–18), Ref2V +1 (defense 3-state / match-on-action)
+- Target weights: `wushu_bridge_wushu_v2_1.safetensors`, `wushu_jev_wushu_v2_1.safetensors`
+
+### Dataset
+- Rebuild `wushu_pairs_v2_logic_chains.jsonl` with continuity ops (see `_stats.json`)
+
+### Train
+- Cloud script `/workspace/train_wushu_v2.py` (alias `train_wushu_v2_1.py`) writes v2.1 artifacts to `/dev/shm` + `ComfyUI/models/wushu_bridge/`
+
 ## v1.1.3 — 2026-09-25 · v2 weights (logic-chain + XYZ)
 
 - Cloud (RTX 5090): MiniMax-H3 CLIP `qwen3vl_32b_minimax_h3_int8_convrot` (dim=5120) encoded `wushu_pairs_v2_logic_chains.jsonl` (615 pairs, DEFAULT_OPS incl. xyz_drift + six failure modes)

@@ -331,12 +331,73 @@ SPELL_FEEDBACK_EN: List[str] = [
     "thud", "recoil", "off-balance", "sparks", "blood", "numb",
 ]
 
+
+# ── 漫剧老李：被击反应 / 防守三态 / 大幅闪避 / 动势衔接 / 命中气爆 ──────────
+HITTEE_REACTION_ZH: List[str] = [
+    "被击", "受击", "硬吃", "弓身", "虾形", "血沫", "瞳孔骤缩", "本能乱拍",
+    "狼狈", "咳血", "闷哼", "踉跄", "倒飞", "嵌墙", "身躯凹陷", "肌肉波纹",
+    "衣料炸出", "沿作用线", "重心压在", "伤侧", "来不及回防",
+]
+HITTEE_REACTION_EN: List[str] = [
+    "takes the hit", "takes the cut", "hittee", "bowed body", "shrimp-bend",
+    "blood mist", "pupils tighten", "flails", "messy scramble", "coughs blood",
+    "staggers", "flies back", "embeds in the wall", "body caves", "muscle ripple",
+    "along the line of force", "weight on the", "too late to recover",
+]
+
+DEFENSE_3STATE_ZH: List[str] = [
+    "完整态", "桩架稳固", "架桥护头", "崩防线", "双臂震开", "双臂弹开",
+    "中线大开", "狼狈过渡", "仓促乱拍", "碎步踉跄", "来不及重新架防",
+    "防线崩开", "架门被震开",
+]
+DEFENSE_3STATE_EN: List[str] = [
+    "full guard", "solid stance", "high guard bridge", "guard breaks",
+    "arms blown open", "center line open", "messy transition", "flailing parry",
+    "staggered scramble", "too late to re-guard", "guard collapses",
+    "defense line breaks",
+]
+
+LARGE_EVASION_ZH: List[str] = [
+    "铁板桥", "大后仰", "贴地下潜", "极低下潜", "侧空翻", "大步滑移",
+    "大步滑位", "360°旋转闪避", "大幅闪避", "下潜贴地",
+]
+LARGE_EVASION_EN: List[str] = [
+    "limbo lean", "deep lean-back", "low duck to the ground", "side flip",
+    "large slip-step", "360 spin evade", "large evasion", "dives flat",
+    "backs off a full step", "limbo bridge",
+]
+
+MATCH_ACTION_ZH: List[str] = [
+    "接上一镜", "动作中段续", "挥招过半", "弧线未完", "动势衔接",
+    "同一运镜内", "顺势续打", "中段切入", "动作连续切",
+]
+MATCH_ACTION_EN: List[str] = [
+    "continuing", "Continuing:", "mid-swing", "mid-arc", "match on action",
+    "same camera move", "rides the unfinished arc", "cuts in mid-action",
+    "action continues", "from the previous beat",
+]
+
+IMPACT_AIR_ZH: List[str] = [
+    "微气爆", "明气爆", "环形气浪", "冲击波", "空气波纹", "残影",
+    "音爆气穴", "地面龟裂", "蛛网裂纹", "碎石弹起", "微停顿", "Hit-Stop",
+]
+IMPACT_AIR_EN: List[str] = [
+    "air burst", "shockwave", "ring blast", "air ripple", "afterimage",
+    "sonic pocket", "ground cracks", "web cracks", "stone chips fly",
+    "micro freeze", "hit-stop", "impact freeze",
+]
+
 # ── 合并导出（中英一起用）──────────────────────────────────────────────
 FORCE_CHAIN: List[str] = FORCE_CHAIN_ZH + FORCE_CHAIN_EN
 DISTANCE: List[str] = DISTANCE_ZH + DISTANCE_EN
 DEFENSE: List[str] = DEFENSE_ZH + DEFENSE_EN
 CONTACT: List[str] = CONTACT_ZH + CONTACT_EN
-FEEDBACK: List[str] = FEEDBACK_ZH + FEEDBACK_EN
+FEEDBACK: List[str] = FEEDBACK_ZH + FEEDBACK_EN + IMPACT_AIR_ZH + IMPACT_AIR_EN
+HITTEE_REACTION: List[str] = HITTEE_REACTION_ZH + HITTEE_REACTION_EN
+DEFENSE_3STATE: List[str] = DEFENSE_3STATE_ZH + DEFENSE_3STATE_EN
+LARGE_EVASION: List[str] = LARGE_EVASION_ZH + LARGE_EVASION_EN
+MATCH_ACTION: List[str] = MATCH_ACTION_ZH + MATCH_ACTION_EN
+IMPACT_AIR: List[str] = IMPACT_AIR_ZH + IMPACT_AIR_EN
 MOVE_NAMES: List[str] = MOVE_NAMES_ZH + MOVE_NAMES_EN
 FOOTWORK: List[str] = FOOTWORK_ZH + FOOTWORK_EN
 CAMERA: List[str] = CAMERA_ZH + CAMERA_EN
@@ -480,6 +541,11 @@ _SLOT_BUCKETS: Dict[str, List[str]] = {
     "spatial_open": SPATIAL_OPEN,
     "xyz_lock": XYZ_LOCK,
     "spell_feedback": SPELL_FEEDBACK,
+    "hittee_reaction": HITTEE_REACTION,
+    "defense_3state": DEFENSE_3STATE,
+    "large_evasion": LARGE_EVASION,
+    "match_action": MATCH_ACTION,
+    "impact_air": IMPACT_AIR,
 }
 
 

@@ -184,7 +184,7 @@ def score_logic(text: str, mode: str = "final", lang: Optional[str] = None) -> L
 
     # ── 7. 打击反馈 ────────────────────────────────────────────────────
     r, n = _ratio(shots, lexicons.FEEDBACK)
-    checks.append(LogicCheck("impact-feedback", "打击反馈（火星/踉跄/衣破·sparks/stagger）", 1.4, r,
+    checks.append(LogicCheck("impact-feedback", "打击反馈（火星/踉跄/衣破/气爆·sparks/stagger/air-burst）", 1.55, r,
                              f"{n}/{len(shots)} 拍有可见的物理反馈"))
 
     # ── 8. 招式具体度 ─────────────────────────────────────────────────
@@ -411,6 +411,66 @@ def score_logic(text: str, mode: str = "final", lang: Optional[str] = None) -> L
         ))
     else:
         checks.append(LogicCheck("spell-hit-feedback", "法术击中须有物理反馈", 0.4, 0.7, "无法术击中事件，中性"))
+
+
+    # ── 17. 漫剧老李：防守三态 / 被击反应 / 动势衔接 / 大幅闪避 ────────
+    d3_n = sum(1 for s in shots if _shot_has(s, lexicons.DEFENSE_3STATE))
+    # 若出现重击/破防语义，却没有三态词 → 重罚；否则软加分
+    heavy = sum(1 for s in shots if _shot_has(s, ["重击", "砸开", "破防", "崩", "heavy hit", "blows", "guard breaks", "砸在架"]))
+    if heavy:
+        d3_score = min(1.0, d3_n / max(1, heavy))
+        if d3_n == 0:
+            d3_score = 0.2
+        detail = f"重击/破防 {heavy}，三态词 {d3_n}"
+    else:
+        d3_score = 0.55 + 0.45 * min(1.0, d3_n / max(1, len(shots)))
+        detail = f"{d3_n}/{len(shots)} 拍含防守三态词" if shots else "无分镜"
+    checks.append(LogicCheck("defense-3state", "防守三态（完整→崩防→狼狈过渡）", 1.25, d3_score, detail))
+
+    ht_n = sum(1 for s in shots if _shot_has(s, lexicons.HITTEE_REACTION) or _shot_has(s, lexicons.FEEDBACK))
+    contact_n = sum(1 for s in shots if _shot_has(s, lexicons.CONTACT))
+    if contact_n:
+        # 有接触就必须有被击/反馈
+        ht_score = min(1.0, ht_n / contact_n)
+        if ht_n == 0:
+            ht_score = 0.15
+        detail = f"接触 {contact_n}，被击/反馈 {ht_n}"
+    else:
+        ht_score = 0.6
+        detail = "无接触事件，中性"
+    checks.append(LogicCheck("hittee-reaction", "被击反应（形变/踉跄/本能抗争）", 1.35, ht_score, detail))
+
+    if len(shots) >= 2:
+        m_n = sum(1 for s in shots[1:] if _shot_has(s, lexicons.MATCH_ACTION) or _shot_has(s, ["接上一镜", "Continuing", "顺势", "rides"]))
+        m_score = m_n / max(1, len(shots) - 1)
+        if m_n == 0:
+            m_score = 0.25
+        checks.append(LogicCheck(
+            "match-on-action", "动势衔接/末态连续（切镜承接）", 1.15, m_score,
+            f"Shot2+ 中 {m_n}/{len(shots)-1} 拍有衔接短语",
+        ))
+    else:
+        checks.append(LogicCheck("match-on-action", "动势衔接/末态连续（切镜承接）", 0.4, 0.75, "单镜，放宽"))
+
+    ev_n = sum(1 for s in shots if _shot_has(s, lexicons.LARGE_EVASION))
+    micro_bad = sum(1 for s in shots if _shot_has(s, ["微微侧身", "轻轻一让", "小幅平移", "slightly sidesteps", "slight dodge", "tiny step"]))
+    if ev_n or micro_bad:
+        ev_score = max(0.0, min(1.0, (ev_n / max(1, ev_n + micro_bad)) - 0.3 * (micro_bad > 0 and ev_n == 0)))
+        detail = f"大幅闪避 {ev_n}，微小闪避 {micro_bad}"
+    else:
+        ev_score = 0.6
+        detail = "无闪避事件，中性"
+    checks.append(LogicCheck("large-evasion", "闪避须大幅化（禁微微侧身）", 0.9, ev_score, detail))
+
+    air_n = sum(1 for s in shots if _shot_has(s, lexicons.IMPACT_AIR))
+    if contact_n:
+        air_score = min(1.0, 0.4 + 0.6 * (air_n / contact_n))
+        detail = f"接触 {contact_n}，气爆/冲击波/龟裂 {air_n}"
+    else:
+        air_score = 0.55
+        detail = "无接触，中性"
+    checks.append(LogicCheck("impact-air-burst", "命中气爆/冲击波/环境破坏反馈", 1.0, air_score, detail))
+
 
     total_w = sum(c.weight for c in checks)
     raw = sum(c.weight * max(0.0, min(1.0, c.score)) for c in checks) / max(total_w, 1e-6)
